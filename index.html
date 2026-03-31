@@ -8,7 +8,8 @@
     <style>
         body { margin: 0; padding: 0; }
         #map { height: 100vh; width: 100%; }
-        .popup-custom { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .popup-custom { font-family: Arial, sans-serif; line-height: 1.5; }
+        .popup-title { color: #2c3e50; font-size: 16px; border-bottom: 2px solid #3498db; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -18,14 +19,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
-        // Centramos el mapa en la bota de Santa Fe
-        var map = L.map('map').setView([-30.5, -60.8], 7);
+        var map = L.map('map').setView([-31.0, -60.8], 7);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Tu enlace CSV
         var csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQiZ1cR3VQbDs_sZatnvjLVTZu1NwaHBGRQ-v4fbNILSe73rCgD83JNyJK_l4LAfnVNSedQukxR-r2/pub?output=csv';
 
         Papa.parse(csvUrl, {
@@ -33,19 +32,19 @@
             header: true,
             complete: function(results) {
                 results.data.forEach(function(row) {
-                    // ATENCIÓN: Si tus columnas se llaman distinto a 'Lat' y 'Lon', cambialo aquí abajo:
                     var lat = parseFloat(row['Lat']); 
                     var lon = parseFloat(row['Lon']);
 
                     if (!isNaN(lat) && !isNaN(lon)) {
                         var marker = L.marker([lat, lon]).addTo(map);
                         
-                        // Aquí armamos lo que se ve al hacer clic
+                        // Mapeo exacto de tus columnas de Google Sheets
                         var contenido = "<div class='popup-custom'>" +
-                                        "<b>Efector:</b> " + (row['Nombre'] || 'Sin nombre') + "<br>" +
-                                        "<b>Nivel:</b> " + (row['Nivel'] || '-') + "<br>" +
-                                        "<b>Región:</b> " + (row['Región'] || '-') + "<br>" +
-                                        "<b>Especialidades:</b> " + (row['Especialidades'] || 'No cargadas') +
+                                        "<div class='popup-title'>" + (row['Nombre del Establecimiento'] || 'Efector') + "</div>" +
+                                        "<b>Nivel:</b> " + (row['Nivel de atencion'] || '-') + "<br>" +
+                                        "<b>Región:</b> " + (row['Region'] || '-') + "<br>" +
+                                        "<b>Localidad:</b> " + (row['Localidad'] || '-') + "<br>" +
+                                        "<b>Especialidades:</b> " + (row['Servicios por especialidad'] || 'No cargadas') +
                                         "</div>";
                         
                         marker.bindPopup(contenido);
